@@ -14,6 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 filelocation <- "Data_Pokemon1.csv" #Enter the location of the data of your computer here.
 fdata <- read.csv(filelocation)
+
+# Ensure the "Type" column is treated as a factor (needed for next steps)
+fdata$Type <- as.factor(fdata$Type)
+
 dim(fdata)
 head(fdata)
 ```
@@ -35,13 +39,18 @@ This graph shows the distribution of the Defense values of the Pokemon. The x-ax
 Scatter plot of Attack and Defense:
 
 ```{r}
+colors <- ifelse(fdata$Type == "Electric", "orange",
+          ifelse(fdata$Type == "Fire", "red",
+          ifelse(fdata$Type == "Grass", "#38a690", 
+          ifelse(fdata$Type == "Ground","brown","#2a2a2a"))))
 plot(fdata$Defense, fdata$Attack, 
      main="Scatterplot of Attack vs Defense", 
      xlab="Defense", 
      ylab="Attack", 
      pch=18,         # This is a solid square
-     cex=1,        # This makes the points the default size
-     col="#292929")     # Points are colored 
+     cex=1,         # This makes the points the default size
+     col=colors)    # Points are colored 
+legend("topright", legend = c("Electric","Fire","Grass","Ground"), fill = c("orange", "red","#38a690","brown"))
 ```
 
 This one is a positive corleation and it looks like a y=x graph with some outlying 
@@ -50,9 +59,6 @@ other).
 
 Counting the number of unique types of Pokémon:
 ```{r}
-
-# Ensure the "Type" column is treated as a factor
-fdata$Type <- as.factor(fdata$Type)
 
 # Calculate the number of unique types
 num_types <- length(levels(fdata$Type))
@@ -91,11 +97,29 @@ print(correlation_test)
 
 ```
 
-Coloring the points of one of the types:
+\newpage
+#####Statistical test & Subset
 ```{r}
-
+# Subset the data based on the type of Pokémon
+high_attack <- fdata[which(fdata$Attack > 75), ]
+dim(high_attack)
+hist(high_attack$Attack)
 ```
 
+Subsets of the data based on the type of Pokémon (Water and Fire):
+```{r}
+water <- fdata[which(fdata$Type == "Water"),]
+fire <- fdata[which(fdata$Type == "Fire"),]
 
+# Perform the Wilcoxon rank-sum test
+wilcox.test(water$Attack, fire$Attack, alternative = "two.sided")
+```
+
+The above test compares the Attack points between Water and Fire Pokémon. The p-value is less than 0.05, which indicates that there is a significant difference between the Attack points of Water and Fire Pokémon.
+
+```{r}
+boxplot(fdata$Attack[fdata$Type=="Water"], fdata$Attack[fdata$Type=="Fire"],
+        ylab="Attack", names=c("Water", "Fire"), col=c("#3369ff","red"))
+```
 
 
