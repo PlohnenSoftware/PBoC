@@ -44,6 +44,10 @@ plot(fdata$Defense, fdata$Attack,
      col="blue")     # Points are colored blue
 ```
 
+This one is a positive corleation and it looks like a y=x graph with some outlying 
+dots (it seems that pokemons attacks and defense stats are somewhat close to each 
+other).
+
 Counting the number of unique types of Pokémon:
 ```{r}
 
@@ -56,7 +60,6 @@ num_types <- length(levels(fdata$Type))
 # Print the number of unique Pokémon types
 print(paste("There are", num_types, "unique types of Pokémon."))
 ```
-
 
 Most and least common Pokémon types:
 ```{r}
@@ -85,6 +88,11 @@ correlation_test <- cor.test(fdata$Defense, fdata$Attack)
 
 # Print the summary of the correlation test
 print(correlation_test)
+
+```
+
+Coloring the points of one of the types:
+```{r}
 
 ```
 
