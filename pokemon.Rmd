@@ -1,0 +1,93 @@
+---
+title: "Pokemon task"
+author: "Krzysztof Zabłocki, Sarbel Fadel, Ryan John"
+output:
+  pdf_document: default
+  html_document: default
+date: "2024-05-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+filelocation <- "Data_Pokemon1.csv" #Enter the location of the data of your computer here.
+fdata <- read.csv(filelocation)
+dim(fdata)
+head(fdata)
+```
+
+Histograms for Attack and Defense columns
+
+```{r}
+hist(fdata$Attack, main="Histogram of Attack", xlab="Attack", col="blue", breaks=20)
+```
+
+This graph shows the distribution of the Attack values of the Pokemon. The x-axis represents the Attack values, while the y-axis represents the frequency of each value. The graph shows that the most common Attack values are between 50 and 100, with a peak around 70. It seems like Gaussian distribution.
+
+```{r}
+hist(fdata$Defense, main="Histogram of Defense", xlab="Defense", col="red", breaks=20)
+```
+
+This graph shows the distribution of the Defense values of the Pokemon. The x-axis represents the Defense values, while the y-axis represents the frequency of each value. The graph is in my opinion still similar to the Gaussian distribution, but it is not as clear as in the case of the Attack values.
+
+Scatter plot of Attack and Defense:
+
+```{r}
+plot(fdata$Defense, fdata$Attack, 
+     main="Scatterplot of Attack vs Defense", 
+     xlab="Defense", 
+     ylab="Attack", 
+     pch=16,         # This is a solid circle
+     cex=1,        # This makes the points the default size
+     col="blue")     # Points are colored blue
+```
+
+Counting the number of unique types of Pokémon:
+```{r}
+
+# Ensure the "Type" column is treated as a factor
+fdata$Type <- as.factor(fdata$Type)
+
+# Calculate the number of unique types
+num_types <- length(levels(fdata$Type))
+
+# Print the number of unique Pokémon types
+print(paste("There are", num_types, "unique types of Pokémon."))
+```
+
+
+Most and least common Pokémon types:
+```{r}
+# Create a frequency table of Pokémon types
+type_table <- table(fdata$Type)
+
+# Find the index of the most common type
+most_common_index <- which.max(type_table)
+# Find the index of the least common type
+least_common_index <- which.min(type_table)
+
+# Extract the most and least common types using the indices
+most_common_type <- names(type_table)[most_common_index]
+least_common_type <- names(type_table)[least_common_index]
+
+# Print the most and least common types and their frequencies
+print(paste("The least common type is:", least_common_type, "with", type_table[least_common_index], "occurrences."))
+print(paste("The most common type is:", most_common_type, "with", type_table[most_common_index], "occurrences."))
+```
+
+
+Correlation test between Defense and Attack:
+```{r}
+# Perform a correlation test between Defense and Attack
+correlation_test <- cor.test(fdata$Defense, fdata$Attack)
+
+# Print the summary of the correlation test
+print(correlation_test)
+
+```
+
+
+
+
