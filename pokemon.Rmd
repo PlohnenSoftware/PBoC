@@ -39,9 +39,9 @@ plot(fdata$Defense, fdata$Attack,
      main="Scatterplot of Attack vs Defense", 
      xlab="Defense", 
      ylab="Attack", 
-     pch=16,         # This is a solid circle
+     pch=18,         # This is a solid square
      cex=1,        # This makes the points the default size
-     col="blue")     # Points are colored blue
+     col="#292929")     # Points are colored 
 ```
 
 Counting the number of unique types of Pokémon:
