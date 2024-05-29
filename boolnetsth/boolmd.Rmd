@@ -7,24 +7,172 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(BoolNet)
+library(igraph)
+
 ```
 
-## R Markdown
+# Exercise simple network
+```{r}
+# Load the network
+simple <- loadNetwork("simplenetwork.txt")
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Check the contents of the variable 'simple'
+print(simple)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# Get the attractors
+attr <- getAttractors(simple)
 
-```{r cars}
-summary(cars)
+```
+\newpage
+```{r}
+# Check the contents of the variable 'attr'
+print(attr)
+
+# Display the network using plotStateGraph
+plotStateGraph(attr, drawLabels = TRUE)
+
 ```
 
-## Including Plots
+## Question 1: what are the various dots and lines that you see?
+ The lines are steps in the trajectories, the dots are the states of the network.
 
-You can also embed plots, for example:
+## Question 2: how many basins of attraction are there? Why?
+   1. (Fixed-Point) Attractor 1 has 5 basin of attraction
+   2. (Cyclic) Attractor 2 has 3 basin of attraction
+There are 8 attractors because there are 8 (2^3) possible states in the network. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+\newpage
+# Exercise insulin network
+```{r}
+
+# Load the insulin regulatory network
+insulin <- loadNetwork("insulin.txt")
+
+# Check the contents of the variable 'insulin'
+print(insulin)
+
+# Find the attractors of the network
+attr <- getAttractors(insulin)
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+\newpage
+
+```{r}
+# Check the contents of the variable 'attr'
+print(attr)
+
+# Plot the state transition graph to visualize the basin of attraction
+plotStateGraph(attr, drawLabels = FALSE)
+
+# Force the network into states without extracellular glucose
+off <- fixGenes(insulin, "extracellular_glucose", 0)
+
+# Find and plot attractors for the modified network
+attr_off <- getAttractors(off)
+plotStateGraph(attr_off, drawLabels = FALSE)
+
+# Force the network into states with always extracellular glucose
+on <- fixGenes(insulin, "extracellular_glucose", 1)
+
+# Find and plot attractors for the modified network
+attr_on <- getAttractors(on)
+plotStateGraph(attr_on, drawLabels = FALSE)
+```
+
+\newpage
+
+## Question 3: What do you think is "wrong" or unrealistic in the model?
+
+1. **GLUT2 Expression**:
+   - **Model**: `GLUT2` is expressed when both `extracellular_glucose` and `cellular_glucose` are present (`GLUT2, extracellular_glucose & cellular_glucose`).
+   - **Reality**: GLUT2 is primarily regulated by extra-cellular glucose levels and is responsible for the uptake of glucose into the cell. Its expression is not directly dependent on the presence of cellular glucose.
+
+2. **K Channel Regulation**:
+   - **Model**: The potassium channel (`K_channel`) is only influenced by cellular ATP levels (`K_channel, !cellular_ATP`).
+   - **Reality**: Potassium channels in pancreatic beta cells are influenced by multiple factors, including ATP levels, but also other signaling molecules and cellular states. The model oversimplifies this regulation.
+
+3. **Calcium Channel Activation**:
+   - **Model**: Calcium channels are activated by the presence of cellular potassium (`calcium_channel, cellular_K`).
+   - **Reality**: While depolarization due to potassium efflux is a trigger for calcium channel opening, the model should include the intermediate step of membrane depolarization rather than directly linking potassium to calcium channel activation.
+
+4. **Insulin Release**:
+   - **Model**: Insulin release is solely dependent on intra-cellular calcium levels (`insulin_release, cellular_Ca`).
+   - **Reality**: Insulin release is a complex process involving multiple signaling pathways, including calcium influx but also various other factors such as glucose metabolism, signaling molecules, and intra-cellular vesicle trafficking mechanisms.
+   
+\newpage
+# The cell cycle network
+
+```{r}
+# Load the cell cycle network data from the BoolNet package
+data(cellcycle)
+
+# Visualize the network wiring
+plotNetworkWiring(cellcycle)
+
+# Get the attractors of the network
+attr <- getAttractors(cellcycle)
+```
+
+\newpage
+
+```{r}
+# Check the contents of the variable 'attr'
+print(attr)
+
+# Plot the state transition graph to visualize the basin of attraction
+plotStateGraph(attr, drawLabels = FALSE)
+
+# Force the network into states with different inputs (e.g., CycD as an input, constant). This allows us to see CyclinD as an crucial factor for cycle to start and proceed.
+off <- fixGenes(cellcycle, "CycD", 0)
+attr_off <- getAttractors(off)
+plotStateGraph(attr_off, drawLabels = FALSE)
+
+on <- fixGenes(cellcycle, "CycD", 1)
+attr_on <- getAttractors(on)
+plotStateGraph(attr_on, drawLabels = FALSE)
+
+```
+
+## Question 4: Show this graph. What are the dots and lines (solid and dashed) in this graph?
+ The lines are steps in the trajectories, the dots are the states of the network. The dashed lines represent the transitions between unstable states, while the solid lines represent the self-loops or cycles how we say in BIO.
+
+## Question 5: What do you think the "attractors" of this network represent in biological terms?
+ They represent some signaling proteins.
+ 
+## Question 6: Show the two state graphs.
+ Done above :))
+ 
+## Question 7: What is the biological interpretation of the two state graph plots?
+The one without `CycD` as an input shows that the network is in a stable state, while the one with `CycD` as an input shows that the network is in an cycling. This means that `CycD` is a crucial factor for the cell cycle to start and proceed.
+
+# Exercise simple cycle
+```{r}
+# Load the network
+simpleC <- loadNetwork("simplecycle.txt")
+
+# Check the contents of the variable 'simple'
+print(simpleC)
+
+# print the network wiring
+plotNetworkWiring(simpleC)
+
+```
+\newpage
+```{r}
+# Check the contents of the variable 'attr'
+print(attr)
+
+# Display the network using plotStateGraph
+plotStateGraph(attr, drawLabels = FALSE)
+
+offC <- fixGenes(simpleC, "S1", 0)
+attr_offC <- getAttractors(offC)
+plotStateGraph(attr_offC, drawLabels = FALSE)
+
+onC <- fixGenes(simpleC, "S2", 1)
+attr_onC <- getAttractors(onC)
+plotStateGraph(attr_onC, drawLabels = FALSE)
+```

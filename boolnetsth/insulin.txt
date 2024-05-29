@@ -1,0 +1,10 @@
+targets, factors
+extracellular_glucose, extracellular_glucose
+GLUT2, extracellular_glucose & cellular_glucose
+cellular_glucose, GLUT2
+cellular_ATP, cellular_glucose
+K_channel, !cellular_ATP
+cellular_K, !K_channel
+calcium_channel, cellular_K
+cellular_Ca, calcium_channel
+insulin_release, cellular_Ca
