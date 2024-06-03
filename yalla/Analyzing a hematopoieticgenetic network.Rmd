@@ -1,0 +1,39 @@
+---
+title: "Analyzing a hematopoietic genetic network"
+author: "Charbel Fadel, Ryan John and Krzysztof Zablocki"
+date: "2024-06-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(BoolNet)
+library(igraph)
+
+# Load the network
+HSC <- loadNetwork("hsc.txt")
+```
+
+
+
+```{r}
+attr <- getAttractors(HSC)
+plotStateGraph(attr)
+print(attr)
+
+```
+Attractor 4 is the one that is closest to the experimental HSPC expression profile 11101111111 - 11100111111(Attractor 4)
+
+
+```{r}
+attr <- getAttractors(HSC, type="asynchronous",
+method="random", startStates=500)
+print(attr)
+```
+
+
+Attractor 3 appears to be an assynchronous attractor because it is a complex/loose attractor
+
+
+
+

@@ -1,0 +1,12 @@
+targets,factors
+Erg, (Fli1 | Erg | Gata2 | Runx1) & !(Scl & Eto2)
+Eto2, Scl & Gata2
+Fli1, (Fli1 | Gata2 | Erg | (Scl & Gata2)) & !Gata1
+Gata1, Scl & Gata1 & !(Pu1 & Gata1)
+Gata2, (Erg | (Scl & Gata2) | Fli1) & !(Gata1 & Zfpm1) & !(Gata2 & Hhex)
+Hhex, Erg | Fli1 | (Scl & Gata2)
+Pu1, (Pu1 | Runx1 | Fli1) & !(Gata1 & Pu1)
+Runx1, (Runx1 | Pu1 | (Gata2 & Scl) | Fli1 | Erg) & !(Runx1 & Smad6)
+Scl, (Fli1 & Gata2) | (Scl & Gata1) | (Gata2 & Scl) | Fli1 | Erg
+Smad6, Erg | Fli1 | (Scl & Gata2)
+Zfpm1, Gata2 & Scl
