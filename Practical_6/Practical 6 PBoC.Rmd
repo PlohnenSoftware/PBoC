@@ -5,17 +5,15 @@ date: "2024-06-03"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 library(BoolNet)
 library(igraph)
 library(openxlsx)
 
 decimalToBinaryTable <- function(num) {
-  # Initialize an empty vector for binary digits
+  # Initialize an vector
   binary_vector <- integer()
-  
-  # Populate the vector with binary digits by dividing the number by 2
   while(num > 0) {
     binary_vector <- c(num %% 2, binary_vector)
     num <- num %/% 2
@@ -56,12 +54,9 @@ print(attr2)
 genes <- attr2$stateInfo$genes
 fixedStates <- attr2$attractors[3][[1]]$involvedStates
 fixedStates <- sapply(fixedStates, decimalToBinaryTable)
-genes_df <- setNames(data.frame(t(fixedStates)), genes)
-
-
-genes_df <- genes_df[nrow(genes_df):1, ]
-genes_df <- genes_df[, ncol(genes_df):1]
-
+fixedStates <- t(fixedStates)
+fixedStates <- fixedStates[nrow(fixedStates):1, ncol(fixedStates):1]
+genes_df <- setNames(data.frame(fixedStates), genes)
 print(str(genes_df))
 write.xlsx(genes_df, "Attractors_Output.xlsx", sheetName = "InvolvedStates")
 ```
@@ -97,31 +92,6 @@ Zfpm1: 0.5
 
 We concluded that the avg activities per gene were not similar except for the Gata1.
 
-```{r}
-pdf("RBNs.pdf")
-for(i in 1:10){ #initiating a loop
-net<-generateRandomNKNetwork(n=10, k=i) # generating random networks with n=10 genes and each gene having from 1-10 ibput genes
-plotNetworkWiring(net, main=i) #Plotting the network with title i
-attr <- getAttractors(net) # getting the number of attractors and attributing it to the variable attr
-plotStateGraph(attr, main=i) #plotting the attractors with i being the title
-}
-dev.off("RBNs.pdf") # closes the pdf directly when it opens
-```
-
-
-```{r}
-pdf("Pertubations.pdf")
-data(cellcycle)
-attr <- getAttractors(cellcycle)
-plotStateGraph(attr, main="Unperturbed network")
-for(i in 1:5){
-perturbedNet <- perturbNetwork(cellcycle, perturb="functions", method="bitflip")
-attr <- getAttractors(perturbedNet)
-plotStateGraph(attr, main=i)
-}
-dev.off("Perturbations.pdf")
-```
-
 *Part 2: Creating Random Networks*
 ```{r}
 pdf("RBNs.pdf")
@@ -131,7 +101,7 @@ plotNetworkWiring(net, main=i) #Plotting the network with title i
 attr <- getAttractors(net) # getting the number of attractors and attributing it to the variable attr
 plotStateGraph(attr, main=i) #plotting the attractors with i being the title
 }
-dev.off("RBNs.pdf") # closes the pdf directly when it opens
+dev.off("RBNs.pdf") # closes the pdf directly when it opens (on mac) 
 ```
 
 *Part 3: Random Boolean Networks to evaluate biological networks *
@@ -146,7 +116,7 @@ perturbedNet <- perturbNetwork(cellcycle, perturb="functions", method="bitflip")
 attr <- getAttractors(perturbedNet) #attractors of the perturbed networks
 plotStateGraph(attr, main=i) #plotting the attractors
 }
-dev.off("Perturbations.pdf") # closes the pdf directly when it opens
+dev.off("Perturbations.pdf") # closes the pdf directly when it opens (on mac) 
 ```
 
 **Perturbation experiments:**
