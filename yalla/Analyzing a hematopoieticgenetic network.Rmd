@@ -1,6 +1,6 @@
 ---
 title: "Analyzing a hematopoietic genetic network"
-author: "Charbel Fadel, Ryan John and Krzysztof Zablocki"
+author: "Charbel Fadel, Ryan John and Krzysztof Zabłocki"
 date: "2024-06-03"
 output: pdf_document
 ---
@@ -9,6 +9,28 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 library(BoolNet)
 library(igraph)
+library(openxlsx)
+
+decimalToBinaryTable <- function(num) {
+  # Initialize an empty vector for binary digits
+  binary_vector <- integer()
+  
+  # Populate the vector with binary digits by dividing the number by 2
+  while(num > 0) {
+    binary_vector <- c(num %% 2, binary_vector)
+    num <- num %/% 2
+  }
+  
+  # Ensure the binary vector is always of length 11
+  # If shorter, prefix with zeros
+  if (length(binary_vector) < 11) {
+    binary_vector <- c(rep(0, 11 - length(binary_vector)), binary_vector)
+  }
+  
+  return(binary_vector)
+}
+
+
 
 # Load the network
 HSC <- loadNetwork("hsc.txt")
@@ -26,9 +48,24 @@ Attractor 4 is the one that is closest to the experimental HSPC expression profi
 
 
 ```{r}
-attr <- getAttractors(HSC, type="asynchronous",
+attr2 <- getAttractors(HSC, type="asynchronous",
 method="random", startStates=500)
-print(attr)
+print(attr2)
+
+# Write attractors to an Excel file
+genes <- attr2$stateInfo$genes
+fixedStates <- attr2$attractors[3][[1]]$involvedStates
+fixedStates <- sapply(fixedStates, decimalToBinaryTable)
+genes_df <- setNames(data.frame(t(fixedStates)), genes)
+
+# Reverse the rows if they are in reverse order
+genes_df <- genes_df[nrow(genes_df):1, ]
+
+# Optionally reverse the columns if they are in reverse order
+genes_df <- genes_df[, ncol(genes_df):1]
+
+print(str(genes_df))
+write.xlsx(genes_df, "Attractors_Output.xlsx", sheetName = "InvolvedStates")
 ```
 
 

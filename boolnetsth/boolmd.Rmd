@@ -158,15 +158,15 @@ print(simpleC)
 
 # print the network wiring
 plotNetworkWiring(simpleC)
-
+attrC <- getAttractors(simpleC)
 ```
 \newpage
 ```{r}
-# Check the contents of the variable 'attr'
-print(attr)
+# Check the contents of the variable 'attrC'
+print(attrC)
 
 # Display the network using plotStateGraph
-plotStateGraph(attr, drawLabels = FALSE)
+plotStateGraph(attrC, drawLabels = FALSE)
 
 offC <- fixGenes(simpleC, "S1", 0)
 attr_offC <- getAttractors(offC)

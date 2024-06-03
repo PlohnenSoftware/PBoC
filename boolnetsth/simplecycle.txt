@@ -1,7 +1,6 @@
 targets, factors
 S2, S1
-A,D & !S2
+A, D & !S2
 B, A
 C, B
-D, C
-
+D, C 
