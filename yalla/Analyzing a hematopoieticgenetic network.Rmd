@@ -1,5 +1,5 @@
 ---
-title: "Analyzing a hematopoietic genetic network"
+title: "Practical 6 PBoC"
 author: "Charbel Fadel, Ryan John and Krzysztof Zablocki"
 date: "2024-06-03"
 output: pdf_document
@@ -15,7 +15,7 @@ HSC <- loadNetwork("hsc.txt")
 ```
 
 
-
+*Part 1 : Analyzing a hematopoietic genetic network*
 ```{r}
 attr <- getAttractors(HSC)
 plotStateGraph(attr)
@@ -32,8 +32,91 @@ print(attr)
 ```
 
 
-Attractor 3 appears to be an assynchronous attractor because it is a complex/loose attractor
+Task 2 : Attractor 3 appears to be an assynchronous attractor because it is a complex/loose attractor
+
+Task 3 : The average expression per gene for the 12 individual cells is:
 
 
+ Eto2: 0.33   
+ Fli1: 0.25      
+ Gata1: 0.00    
+ Gata2: 0.04     
+ Hhex: 0.50  
+ Pu.1: 0.33    
+ Runx1: 0.08    
+ Scl: 0.67    
+ Smad6: 0.13    
+ Zfpm1: 0.42    
 
+and the avg activity per gene across the 32 states IS :
+Erg :  0.5	
+Eto2:  0.5	
+Fli1:  1	
+Gata1: 0	
+Gata2: 0.5	
+Hhex:  1	
+Pu.1:  1	
+Runx1: 0.5	
+Scl:   1	
+Smad6: 1	
+Zfpm1: 0.5
+
+We concluded that the avg activities per gene were not similar except for the Gata1.
+
+
+*Part 2: Creating Random Networks*
+```{r}
+pdf("RBNs.pdf")
+for(i in 1:10){ #initiating a loop
+net<-generateRandomNKNetwork(n=10, k=i) # generating random networks with n=10 genes and each gene having from 1-10 ibput genes
+plotNetworkWiring(net, main=i) #Plotting the network with title i
+attr <- getAttractors(net) # getting the number of attractors and attributing it to the variable attr
+plotStateGraph(attr, main=i) #plotting the attractors with i being the title
+}
+dev.off("RBNs.pdf") # closes the pdf directly when it opens
+```
+
+*Part 3: Random Boolean Networks to evaluate biological networks *
+**Task 4**
+```{r}
+pdf("Pertubations.pdf")
+data(cellcycle) # calling for cellcycle 
+attr <- getAttractors(cellcycle) #attributing it to attr (getting the nbr of aatractors)
+plotStateGraph(attr, main="Unperturbed network") #plottinig the attractos 
+for(i in 1:5){ #creating the loop
+perturbedNet <- perturbNetwork(cellcycle, perturb="functions", method="bitflip") #The perturbNetwork function perturbs the network by altering its functional logic according to the specified method, creating a modified version of the original network.
+attr <- getAttractors(perturbedNet) #attractors of the perturbed networks
+plotStateGraph(attr, main=i) #plotting the attractors
+}
+dev.off("Perturbations.pdf") # closes the pdf directly when it opens
+```
+
+**Perturbation experiments:**
+```{r}
+testNetworkProperties(cellcycle, numRandomNets=100,
+testFunction="testAttractorRobustness", testFunctionParams =
+list(perturb="functions", copies=100))
+```
+
+The histogram shows the distribution of the percentage of identical attractors from 100 random networks:
+
+    White Bars: Frequency of different percentages of identical attractors.
+    Red Line: Marks where the actual network's percentage is greater than 96% of random results.
+    Blue Line: Represents the 95% quantile of the random results, indicating the threshold below which 95% of the random network results fall.
+    Conclusion: The actual network's attractor robustness is significantly higher than expected by chance, indicating a meaningful pattern or property in the network.
+    
+***Same qeustion for HSC networks :***
+
+```{r}
+testNetworkProperties(HSC, numRandomNets=100,
+testFunction="testAttractorRobustness", testFunctionParams =
+list(perturb="functions", copies=100))
+```
+
+
+    White Bars: Frequency of different percentages of identical attractors.
+    Red Line: Marks where the actual network's percentage is greater than 96% of random results.
+    Blue Line: Represents the 95% quantile of the random results, indicating the threshold below which 95% of the random network results fall.
+
+Conclusion: The actual HSC network's percentage of identical attractors is significantly higher than expected by chance, exceeding both the 95% quantile and being greater than 96% of the random results. This indicates a meaningful robustness in the attractor structure of the HSC network.
 
