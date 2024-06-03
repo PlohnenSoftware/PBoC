@@ -32,8 +32,61 @@ print(attr)
 ```
 
 
-Attractor 3 appears to be an assynchronous attractor because it is a complex/loose attractor
+Task 2 : Attractor 3 appears to be an assynchronous attractor because it is a complex/loose attractor
+
+Task 3 : The average expression per gene for the 12 individual cells is:
+
+
+ Eto2: 0.33   
+ Fli1: 0.25      
+ Gata1: 0.00    
+ Gata2: 0.04     
+ Hhex: 0.50  
+ Pu.1: 0.33    
+ Runx1: 0.08    
+ Scl: 0.67    
+ Smad6: 0.13    
+ Zfpm1: 0.42    
+
+and the avg activity per gene across the 32 states IS :
+Erg :  0.5	
+Eto2:  0.5	
+Fli1:  1	
+Gata1: 0	
+Gata2: 0.5	
+Hhex:  1	
+Pu.1:  1	
+Runx1: 0.5	
+Scl:   1	
+Smad6: 1	
+Zfpm1: 0.5
+
+We concluded that the avg activities per gene were not similar except for the Gata1.
 
 
 
+```{r}
+pdf("RBNs.pdf")
+for(i in 1:10){ #initiating a loop
+net<-generateRandomNKNetwork(n=10, k=i) # generating random networks with n=10 genes and each gene having from 1-10 ibput genes
+plotNetworkWiring(net, main=i) #Plotting the network with title i
+attr <- getAttractors(net) # getting the number of attractors and attributing it to the variable attr
+plotStateGraph(attr, main=i) #plotting the attractors with i being the title
+}
+dev.off("RBNs.pdf") # closes the pdf directly when it opens
+```
+
+
+```{r}
+pdf("Pertubations.pdf")
+data(cellcycle)
+attr <- getAttractors(cellcycle)
+plotStateGraph(attr, main="Unperturbed network")
+for(i in 1:5){
+perturbedNet <- perturbNetwork(cellcycle, perturb="functions", method="bitflip")
+attr <- getAttractors(perturbedNet)
+plotStateGraph(attr, main=i)
+}
+dev.off("Perturbations.pdf")
+```
 
