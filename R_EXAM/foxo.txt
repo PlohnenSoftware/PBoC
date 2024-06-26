@@ -1,0 +1,6 @@
+targets, factors
+GSK3B, WNT & !AKT
+TSC2,GSK3B & !AKT
+AKT, !TSC2
+FOXO, !AKT & BCATENIN
+BCATENIN, !GSK3B

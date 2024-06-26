@@ -7,3 +7,13 @@
 *.tex
 *.pdf
 *.xlsx
+*.aux
+*.html
+*.out
+*.toc
+*.bbl
+*.blg
+*.docx
+*.doc
+*.odt
+*.rtf

@@ -1,0 +1,83 @@
+---
+title: "Exam PBoC 1"
+author: "Krzysztof Zabłocki"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+library(BoolNet)
+library(igraph)
+```
+
+```{r load_network}
+# Load the network
+foxo <- loadNetwork("foxo.txt")
+foxo_symbolic <- loadNetwork("foxo.txt", symbolic = TRUE)
+plotNetworkWiring(foxo) #plot the network wiring to confirm correct loading
+```
+
+Printing the network as an text information:
+```{r print_network}
+print(foxo)
+```
+
+Plotting the state graph of the network:
+```{r plot_state_graph}
+attr <- getAttractors(foxo) #to plot the state graph we need to get the attractors
+plotStateGraph(attr)
+```
+
+On the above screen we can see some objects here are meanings of them:
+
+* the thin circles are the states of the network, which are not attractors
+
+* the bold circles are the attractors
+
+* the dashed lines are the transitions between the states
+
+* the solid lines are the transitions between the states that are part of the attractors, but since in this case we have only Fixed-Point attractors solid lines forms loops going back to the state they started from
+
+\newpage
+
+Making an attractor plot in order to show which genes are active or inactive in different attractors:
+
+```{r plot_attractor}
+plotAttractors(attr, labels=TRUE)
+```
+
+# FOXO
+
+To determine under which conditions FOXO is expressed, we need to find a scenario where AKT is inactive and BCATENIN is active. Based on the atractor states and the Boolean transition for this network, FOXO is not expressed in any of the listed attractors. For FOXO to be expressed, we need a state where AKT is inactive and BCATENIN is active **simultaneously**, which does not occur in any of the given attractor states. So the time when we should expect FOXO to be expressed is when during some transition states where mentioned conditions are met. 
+
+```{r looking_for_foxo}
+
+startState = c(GSK3B = 0, TSC2 = 0, AKT = 0, FOXO = 0, BCATENIN = 1, WNT = 1)
+
+results <- simulateSymbolicModel(
+  foxo_symbolic,
+  startStates = list(startState),
+  returnGraph = TRUE
+)
+
+print(results,sequences=TRUE,graph=TRUE)
+
+```
+
+\newpage
+
+In above print we can see FOXO expressed in second step of simulation.
+
+```{r seq_plot}
+plotSequence(foxo,startState)
+```
+
+
+# Experiment:
+
+In experiment to find all those proteins we can simulate the network with random initial state and check if the FOXO is expressed, if it is we write down all other proteins expressed too.
+
+ 
